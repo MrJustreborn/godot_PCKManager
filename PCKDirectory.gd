@@ -104,6 +104,7 @@ func get_pck_files( pck_path ):
 	if file.file_exists(pck_path):
 		file.open(pck_path, File.READ)
 		if file.get_32() != 0x43504447: #magic
+			file.close()
 			return pck_files
 		var version = file.get_32()
 		var major = file.get_32()
@@ -124,6 +125,7 @@ func get_pck_files( pck_path ):
 			var offset =  file.get_64()
 			var size = file.get_64()
 			var md5 = file.get_buffer(16)
+		file.close()
 	return pck_files
 
 func add_pck( pck_path, addToProject=true ):
