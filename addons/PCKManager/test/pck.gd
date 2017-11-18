@@ -3,7 +3,7 @@ extends EditorScript
 
 func _run():
 	var packer = PCKPacker.new()
-	packer.pck_start("res://test.pck",0)
+	packer.pck_start("res://addons/PCKManager/test/test.pck",0)
 	packer.add_file("res://icon.png","res://icon.png")
 	packer.add_file("res://icon2.png","res://icon.png")
 	packer.add_file("res://test/icon.png","res://icon.png")
@@ -21,7 +21,7 @@ func _run():
 	var file = File.new()
 	
 	#file.set_endian_swap(true)
-	file.open("res://test.pck",File.READ)
+	file.open("res://addons/PCKManager/test/test.pck",File.READ)
 	
 	print(str(file.get_32() == 0x43504447))
 	print("Version: ",file.get_32()," / Major: ",file.get_32()," / Minor: ",file.get_32()," / Revision: ",file.get_32())

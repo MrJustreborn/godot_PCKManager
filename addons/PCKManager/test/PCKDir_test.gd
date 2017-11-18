@@ -2,9 +2,9 @@ extends Node
 
 
 func _ready():
-	var dir = load("res://PCKDirectory.gd").new()
+	var dir = load("res://addons/PCKManager/PCKDirectory.gd").new()
 	
-	dir.change_dir("res://hud/test/")
+	dir.change_dir("res://addons/PCKManager/test/")
 	dir.list_dir_begin(true)
 	
 	print("===list dirs===")
@@ -25,7 +25,7 @@ func _ready():
 	print("===add dirs===")
 	
 	print("common: ",dir.get_common_paths("res://test.pck"))
-	dir.add_pck("res://test.pck",false)
+	dir.add_pck("res://addons/PCKManager/test/test.pck",false)
 	
 	print("===list new dirs===")
 	
