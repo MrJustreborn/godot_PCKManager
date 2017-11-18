@@ -7,6 +7,9 @@ onready var lineEdit = get_node("VBoxContainer/HBoxContainer/LineEdit")
 var PCKDir = preload("res://addons/PCKManager/PCKDirectory.gd")
 var pckDir = PCKDir.new(false)
 
+func _ready():
+	$VBoxContainer/HBoxContainer/Button.icon = get_icon("Search", "EditorIcons")
+
 func _parseFiles():
 	tree.clear()
 	
@@ -14,6 +17,7 @@ func _parseFiles():
 	var n = lineEdit.text.split("/")
 	n = n[n.size()-1]
 	root.set_text(0,n)
+	root.set_icon(0,get_icon("File", "EditorIcons"))
 	
 	var drive_names = []
 	for drives in pckDir.get_drive_count():
@@ -21,6 +25,7 @@ func _parseFiles():
 		drive_names.append(drive)
 		var item = tree.create_item(root)
 		item.set_text(0,drive)
+		item.set_icon(0,get_icon("Filesystem", "EditorIcons"))
 		
 		pckDir.change_dir(drive)
 		pckDir.list_dir_begin(true)
@@ -31,6 +36,7 @@ func _parseFiles():
 			if pckDir.current_is_dir():
 				var dir = tree.create_item(item)
 				dir.set_text(0,s)
+				dir.set_icon(0,get_icon("Folder", "EditorIcons"))
 				dirs.append(s)
 				_addDir(dir, pckDir.get_current_dir()+s, PCKDir.new(false,pckDir.get_raw()))
 			else:
@@ -78,9 +84,9 @@ func _on_Tree_item_selected():
 	var files = data["files"]
 	
 	for d in dirs:
-		itemList.add_item(d)
+		itemList.add_item(d,get_icon("Folder", "EditorIcons"))
 	for f in files:
-		itemList.add_item(f)
+		itemList.add_item(f,get_icon("File", "EditorIcons"))
 
 
 func _on_ItemList_item_activated( index ):
