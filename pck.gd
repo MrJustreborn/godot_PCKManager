@@ -1,12 +1,15 @@
 tool
 extends EditorScript
 
-
 func _run():
 	var packer = PCKPacker.new()
 	packer.pck_start("res://test.pck",0)
 	packer.add_file("res://icon.png","res://icon.png")
 	packer.add_file("res://icon2.png","res://icon.png")
+	packer.add_file("res://test/icon.png","res://icon.png")
+	packer.add_file("res://test/icon2.png","res://icon.png")
+	packer.add_file("res://test2/icon.png","res://icon.png")
+	packer.add_file("res://test2/icon2.png","res://icon.png")
 	packer.flush(true)
 	
 	
