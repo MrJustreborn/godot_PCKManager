@@ -169,6 +169,8 @@ show_hidden_files = false
 
 [connection signal="item_selected" from="VBoxContainer/VSplitContainer/Tree" to="." method="_on_Tree_item_selected"]
 
+[connection signal="item_activated" from="VBoxContainer/VSplitContainer/ItemList" to="." method="_on_ItemList_item_activated"]
+
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
 
 
