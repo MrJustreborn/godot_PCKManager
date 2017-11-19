@@ -42,8 +42,8 @@ func _parseFiles():
 			else:
 				files.append(s)
 			s = pckDir.get_next()
-		item.set_metadata(0,{"dirs":dirs,"files":files})
-	root.set_metadata(0,{"dirs":drive_names,"files":{}})
+		item.set_metadata(0,{"dirs":dirs,"files":files,"cur_dir":pckDir.get_current_dir()})
+	root.set_metadata(0,{"dirs":drive_names,"files":{},"cur_dir":""})
 
 func _addDir( root, path, pckDirAccess ):
 	pckDirAccess.change_dir(path)
@@ -60,7 +60,7 @@ func _addDir( root, path, pckDirAccess ):
 		else:
 			files.append(s)
 		s = pckDirAccess.get_next()
-	root.set_metadata(0,{"dirs":dirs,"files":files})
+	root.set_metadata(0,{"dirs":dirs,"files":files,"cur_dir":pckDirAccess.get_current_dir()})
 
 func _on_Button_pressed():
 	$FileDialog.popup()
@@ -82,13 +82,35 @@ func _on_Tree_item_selected():
 		return
 	var dirs = data["dirs"]
 	var files = data["files"]
+	var idx = 0
 	
 	for d in dirs:
 		itemList.add_item(d,get_icon("Folder", "EditorIcons"))
+		itemList.set_item_metadata(idx,data["cur_dir"])
+		idx+=1
 	for f in files:
 		itemList.add_item(f,get_icon("File", "EditorIcons"))
+		itemList.set_item_metadata(idx,data["cur_dir"])
+		idx+=1
 
 
 func _on_ItemList_item_activated( index ):
 	itemList.get_item_text(index)
 	tree.get_selected().get_parent().select(0)
+
+
+func _on_ItemList_item_rmb_selected( index, at_position ):
+	itemList.get_node("PopupMenu").clear()
+	
+	itemList.get_node("PopupMenu").add_item("Save to disc",0)
+	itemList.get_node("PopupMenu").set_item_metadata(0,index)
+	
+	itemList.get_node("PopupMenu").set_position(itemList.get_global_position() + at_position)
+	itemList.get_node("PopupMenu").popup()
+
+
+func _on_PopupMenu_id_pressed( ID ):
+	var idx = itemList.get_node("PopupMenu").get_item_metadata(ID)
+	print(itemList.get_item_metadata(idx))
+	print(pckDir.get_pck_path_for_ressource("res://"))
+	pckDir.extract_to("res://icon.png", "res://icon_neu.png")

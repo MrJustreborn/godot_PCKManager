@@ -1,6 +1,7 @@
 extends Directory
 
 var files = {}
+var file_to_pck = {}
 
 var list_dirs = []
 var list_files = []
@@ -26,9 +27,11 @@ func _init(addProject=true, preFill={}):
 		if !files[dir.get_current_dir()].has(s):
 			if dir.current_is_dir():
 				if s != "..":
-					files[dir.get_current_dir()][s]=_getDirs(dir.get_current_dir(), s)
+					files[dir.get_current_dir()][s] = _getDirs(dir.get_current_dir(), s)
+					file_to_pck[dir.get_current_dir()] = null
 			else:
-				files[dir.get_current_dir()][s]=null
+				files[dir.get_current_dir()][s] = null
+				file_to_pck[dir.get_current_dir()] = null
 		s = dir.get_next()
 
 func _getDirs( basePath, path ):
@@ -49,14 +52,17 @@ func _getDirs( basePath, path ):
 	while(s != ""):
 		if !files.has(s):
 			if dir.current_is_dir():
-				files[s]=_getDirs(dir.get_current_dir(), s)
+				files[s] = _getDirs(dir.get_current_dir(), s)
+				file_to_pck[dir.get_current_dir()] = null
 			else:
-				files[s]=null
+				files[s] = null
+				file_to_pck[dir.get_current_dir()] = null
 		s = dir.get_next()
 	
 	return files
 
-func _addPCKFile( path ):
+func _addPCKFile( path, fromPCK ):
+	file_to_pck[path] = fromPCK
 	var drive = "res"
 	var dirs
 	
@@ -100,8 +106,64 @@ func _addPCKPath( dirs, file ):
 		return {file:null}
 	return files;
 
+func get_pck_path_for_ressource( path ):
+	if file_to_pck.has(path):
+		return file_to_pck[path]
+	return null
+
+func ressource_is_extractable( path ):
+	return self.get_pck_path_for_ressource(path) != null
+
+func get_ressource_buffer( path ):
+	var buffer = null
+	var pck_path = self.get_pck_path_for_ressource(path)
+	if pck_path == null:
+		return buffer
+	
+	var file = File.new()
+	if file.file_exists(pck_path):
+		file.open(pck_path, File.READ)
+		if file.get_32() != 0x43504447: #magic
+			file.close()
+			return buffer
+		var version = file.get_32()
+		var major = file.get_32()
+		var minor = file.get_32()
+		var rev = file.get_32()
+		
+		for i in range(16): #reserved bytes
+			file.get_32()
+		
+		var file_count = file.get_32()
+		
+		for i in range(file_count):
+			var length = file.get_32()
+			
+			var file_path = file.get_buffer(length).get_string_from_utf8()
+			
+			var offset =  file.get_64()
+			var size = file.get_64()
+			var md5 = file.get_buffer(16)
+			
+			if file_path == path:
+				file.seek(offset)
+				buffer = file.get_buffer(size)
+				break
+			
+		file.close()
+	return buffer
+
+func extract_to( resPath, toPath ):
+	var buff = self.get_ressource_buffer(resPath)
+	if buff != null:
+		var file = File.new()
+		file.open(toPath,File.WRITE)
+		file.store_buffer(buff)
+		file.close()
+
 func reset():
 	files={}
+	file_to_pck={}
 
 func get_raw():
 	return files
@@ -143,7 +205,7 @@ func add_pck( pck_path, addToProject=true ):
 	
 	var paths = self.get_pck_files(pck_path)
 	for p in paths:
-		_addPCKFile(p)
+		_addPCKFile(p, pck_path)
 
 func get_common_paths( pck_path ):
 	var common = []

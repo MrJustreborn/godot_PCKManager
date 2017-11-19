@@ -43,13 +43,17 @@ func _run():
 		var offset =  file.get_64()
 		var size = file.get_64()
 		var md5 = file.get_buffer(16)
-		#print("offset: ", offset, " / Size: ", size, " / md5: ",md5)
+		print("offset: ", offset, " / Size: ", size, " / md5: ",md5)
 	
-	#file.seek(189)
-	#var png = file.get_buffer(3498)
+	file.seek(413)
+	var png = file.get_buffer(71896)
 	
-	#print(png.size())
+	print(png.size())
 	
+	file.close()
+	
+	file.open("res://addons/PCKManager/test/test.png",File.WRITE)
+	file.store_buffer(png)
 	file.close()
 	
 	print("\n\n===============\n")
