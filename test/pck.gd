@@ -3,7 +3,7 @@ extends EditorScript
 
 func _run():
 	var packer = PCKPacker.new()
-	packer.pck_start("res://addons/PCKManager/test/test.pck",0)
+	packer.pck_start("res://test/test.pck",0)
 	packer.add_file("res://icon.png","res://icon.png")
 	packer.add_file("res://icon2.png","res://icon.png")
 	packer.add_file("res://test/icon.png","res://icon.png")
