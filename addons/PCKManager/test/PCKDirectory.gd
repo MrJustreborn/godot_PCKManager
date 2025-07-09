@@ -1,4 +1,4 @@
-extends Directory
+extends DirAccess
 
 var files = {}
 
@@ -10,8 +10,7 @@ var is_cur_dir = false
 
 
 func _init():
-	var dir = Directory.new()
-	dir.open(cur_dir)
+	var dir := DirAccess.open(cur_dir)
 	
 	if !files.has(dir.get_current_dir()):
 		files[dir.get_current_dir()]={}
@@ -36,8 +35,7 @@ func _getDirs( basePath, path ):
 
 	var files={}
 	
-	var dir = Directory.new()
-	dir.open(basePath)
+	var dir := DirAccess.open(basePath)
 	dir.change_dir(path)
 	
 	dir.list_dir_begin()
@@ -98,11 +96,11 @@ func _addPCKPath( dirs, file ):
 	return files;
 
 func get_pck_files( pck_path ):
-	var file = File.new()
+	var file : FileAccess
 	var pck_files = []
 	
-	if file.file_exists(pck_path):
-		file.open(pck_path, File.READ)
+	if FileAccess.file_exists(pck_path):
+		file = FileAccess.open(pck_path, FileAccess.READ)
 		if file.get_32() != 0x43504447: #magic
 			file.close()
 			return pck_files
@@ -178,7 +176,7 @@ func change_dir( toDir ):
 			absPath+="/"+p
 		self.change_dir(absPath)
 
-func get_current_dir():
+func get_current_dir(include_drive := true):
 	return cur_dir
 
 func current_is_dir():
@@ -274,24 +272,24 @@ func list_dir_end():
 	list_files.clear()
 	return
 
-func get_space_left():
-	return 0
-func get_drive_count():
-	return 0
-func get_current_drive():
-	return 0
-func get_drive( idx ):
-	return ""
-
-func open( path ):
-	return ERR_UNAVAILABLE
-func copy( from, to ):
-	return ERR_UNAVAILABLE
-func make_dir( path ):
-	return ERR_UNAVAILABLE
-func make_dir_recursive( path ):
-	return ERR_UNAVAILABLE
-func remove( path ):
-	return ERR_UNAVAILABLE
-func rename( from, to ):
-	return ERR_UNAVAILABLE
+#func get_space_left():
+	#return 0
+#func get_drive_count():
+	#return 0
+#func get_current_drive():
+	#return 0
+#func get_drive( idx ):
+	#return ""
+#
+#func open( path ):
+	#return ERR_UNAVAILABLE
+#func copy( from, to ):
+	#return ERR_UNAVAILABLE
+#func make_dir( path ):
+	#return ERR_UNAVAILABLE
+#func make_dir_recursive( path ):
+	#return ERR_UNAVAILABLE
+#func remove( path ):
+	#return ERR_UNAVAILABLE
+#func rename( from, to ):
+	#return ERR_UNAVAILABLE

@@ -6,21 +6,23 @@
 ;   [section] ; section goes between []
 ;   param=value ; assign values to parameters
 
-config_version=3
+config_version=5
 
 [application]
 
-config/name="PCKDirectory"
+config/name="PCKManager"
+config/tags=PackedStringArray("addon")
 run/main_scene="res://addons/PCKManager/test/PCKDir_test.tscn"
+config/features=PackedStringArray("4.4")
 config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "PCKManager" )
+enabled=PackedStringArray("res://addons/PCKManager/plugin.cfg")
 
 [gdnative]
 
-singletons=[  ]
+singletons=[]
 
 [rendering]
 

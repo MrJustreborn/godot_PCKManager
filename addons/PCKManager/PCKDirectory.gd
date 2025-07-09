@@ -1,4 +1,4 @@
-extends Directory
+extends RefCounted
 
 var files = {}
 var file_to_pck = {}
@@ -14,8 +14,7 @@ func _init(addProject=true, preFill={}):
 	files=preFill
 	if !addProject:
 		return
-	var dir = Directory.new()
-	dir.open(cur_dir)
+	var dir = DirAccess.open(cur_dir)
 	
 	if !files.has(dir.get_current_dir()):
 		files[dir.get_current_dir()]={}
@@ -42,8 +41,7 @@ func _getDirs( basePath, path ):
 
 	var files={}
 	
-	var dir = Directory.new()
-	dir.open(basePath)
+	var dir = DirAccess.open(basePath)
 	dir.change_dir(path)
 	
 	dir.list_dir_begin()
@@ -64,7 +62,7 @@ func _getDirs( basePath, path ):
 func _addPCKFile( path, fromPCK ):
 	file_to_pck[path] = fromPCK
 	var drive = "res"
-	var dirs
+	var dirs: Array
 	
 	if path.find("://")>0:
 		drive = path.split("://")[0]
@@ -73,7 +71,7 @@ func _addPCKFile( path, fromPCK ):
 		dirs = path.split("/")
 	
 	var file = dirs[dirs.size()-1]
-	dirs.remove(dirs.size()-1)
+	dirs.remove_at(dirs.size()-1)
 	
 	if !files.has(drive+"://"):
 		files[drive+"://"]={}
@@ -94,13 +92,13 @@ func _merge_files(target, patch):
 		else:
 			target[key] = patch[key]
 
-func _addPCKPath( dirs, file ):
+func _addPCKPath( dirs: Array, file ):
 	var files={}
 	
 	if dirs.size()>0:
 		var dir = dirs[0]
 		if !files.has(dir):
-			dirs.remove(0)
+			dirs.remove_at(0)
 			files[dir]=_addPCKPath( dirs, file)
 	else:
 		return {file:null}
@@ -120,9 +118,9 @@ func get_ressource_buffer( path ):
 	if pck_path == null:
 		return buffer
 	
-	var file = File.new()
-	if file.file_exists(pck_path):
-		file.open(pck_path, File.READ)
+	var file : FileAccess
+	if FileAccess.file_exists(pck_path):
+		file = FileAccess.open(pck_path, FileAccess.READ)
 		if file.get_32() != 0x43504447: #magic
 			file.close()
 			return buffer
@@ -156,8 +154,7 @@ func get_ressource_buffer( path ):
 func extract_to( resPath, toPath ):
 	var buff = self.get_ressource_buffer(resPath)
 	if buff != null:
-		var file = File.new()
-		file.open(toPath,File.WRITE)
+		var file = FileAccess.open(toPath, FileAccess.WRITE)
 		file.store_buffer(buff)
 		file.close()
 
@@ -169,11 +166,12 @@ func get_raw():
 	return files
 
 func get_pck_files( pck_path ):
-	var file = File.new()
+	var file : FileAccess
 	var pck_files = []
 	
-	if file.file_exists(pck_path):
-		file.open(pck_path, File.READ)
+	if FileAccess.file_exists(pck_path):
+		file = FileAccess.open(pck_path, FileAccess.READ)
+		
 		if file.get_32() != 0x43504447: #magic
 			file.close()
 			return pck_files
@@ -226,30 +224,30 @@ func change_dir( toDir ):
 	else:
 		var dirs = toDir.split("/")
 		var curDirs = cur_dir.split("/")
-		curDirs.remove(1) #remove emty index from '//' in 'res://'
+		curDirs.remove_at(1) #remove emty index from '//' in 'res://'
 		
 		if curDirs[curDirs.size()-1] == "":
-			curDirs.remove(curDirs.size()-1)
+			curDirs.remove_at(curDirs.size()-1)
 		
 		for d in dirs:
 			if d == "..":
 				if curDirs.size() <= 1:
 					return
-				curDirs.remove(curDirs.size()-1)
+				curDirs.remove_at(curDirs.size()-1)
 				continue
 			if d == "." || d == "":
 				continue
 			curDirs.append(d)
 		
 		var absPath = curDirs[0]+"/"
-		curDirs.remove(0)
+		curDirs.remove_at(0)
 		if curDirs.size()<1:
 			absPath+="/"
 		for p in curDirs:
 			absPath+="/"+p
 		self.change_dir(absPath+"/")
 
-func get_current_dir():
+func get_current_dir(include_drive := true):
 	return cur_dir
 
 func current_is_dir():
@@ -269,23 +267,23 @@ func dir_exists( path ):
 	else:
 		var dirs = path.split("/")
 		var curDirs = cur_dir.split("/")
-		curDirs.remove(1) #remove emty index from '//' in 'res://'
+		curDirs.remove_at(1) #remove emty index from '//' in 'res://'
 		
 		if curDirs[curDirs.size()-1] == "":
-			curDirs.remove(curDirs.size()-1)
+			curDirs.remove_at(curDirs.size()-1)
 		
 		for d in dirs:
 			if d == "..":
 				if curDirs.size() <= 1:
 					return
-				curDirs.remove(curDirs.size()-1)
+				curDirs.remove_at(curDirs.size()-1)
 				continue
 			if d == "." || d == "":
 				continue
 			curDirs.append(d)
 		
 		var absPath = curDirs[0]+"/"
-		curDirs.remove(0)
+		curDirs.remove_at(0)
 		if curDirs.size()<1:
 			absPath+="/"
 		for p in curDirs:
@@ -295,10 +293,10 @@ func _hasDir( dic, dirs ):
 	if dirs.size()>0:
 		var dir = dirs[0]
 		if dic.has(dir):
-			dirs.remove(0)
+			dirs.remove_at(0)
 			return _hasDir(dic[dir], dirs)
 		elif dir == "":
-			dirs.remove(0)
+			dirs.remove_at(0)
 			return _hasDir(dic, dirs)
 		return false
 	return true
@@ -362,15 +360,15 @@ func get_drive( idx ):
 		return keys[idx]
 	return ""
 
-func open( path ):
-	return ERR_UNAVAILABLE
-func copy( from, to ):
-	return ERR_UNAVAILABLE
-func make_dir( path ):
-	return ERR_UNAVAILABLE
-func make_dir_recursive( path ):
-	return ERR_UNAVAILABLE
-func remove( path ):
-	return ERR_UNAVAILABLE
-func rename( from, to ):
-	return ERR_UNAVAILABLE
+#func open( path ):
+	#return ERR_UNAVAILABLE
+#func copy( from, to ):
+	#return ERR_UNAVAILABLE
+#func make_dir( path ):
+	#return ERR_UNAVAILABLE
+#func make_dir_recursive( path ):
+	#return ERR_UNAVAILABLE
+#func remove( path ):
+	#return ERR_UNAVAILABLE
+#func rename( from, to ):
+	#return ERR_UNAVAILABLE

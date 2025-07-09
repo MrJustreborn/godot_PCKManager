@@ -1,4 +1,4 @@
-tool
+@tool
 extends EditorScript
 
 func _run():
@@ -18,10 +18,8 @@ func _run():
 	
 	print("\n\n===============\n")
 	
-	var file = File.new()
-	
 	#file.set_endian_swap(true)
-	file.open("res://addons/PCKManager/test/test.pck",File.READ)
+	var file := FileAccess.open("res://addons/PCKManager/test/test.pck", FileAccess.READ)
 	
 	print(str(file.get_32() == 0x43504447))
 	print("Version: ",file.get_32()," / Major: ",file.get_32()," / Minor: ",file.get_32()," / Revision: ",file.get_32())
@@ -52,11 +50,10 @@ func _run():
 	
 	file.close()
 	
-	file.open("res://addons/PCKManager/test/test.png",File.WRITE)
+	file = FileAccess.open("res://addons/PCKManager/test/test.png", FileAccess.WRITE)
 	file.store_buffer(png)
 	file.close()
 	
 	print("\n\n===============\n")
 	
 	pass
-

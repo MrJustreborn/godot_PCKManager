@@ -1,14 +1,14 @@
-tool
+@tool
 extends Control
 
-onready var tree = get_node("VBoxContainer/VSplitContainer/Tree")
-onready var itemList = get_node("VBoxContainer/VSplitContainer/ItemList")
-onready var lineEdit = get_node("VBoxContainer/HBoxContainer/LineEdit")
+@onready var tree = get_node("VBoxContainer/VSplitContainer/Tree")
+@onready var itemList = get_node("VBoxContainer/VSplitContainer/ItemList")
+@onready var lineEdit = get_node("VBoxContainer/HBoxContainer/LineEdit")
 var PCKDir = preload("res://addons/PCKManager/PCKDirectory.gd")
 var pckDir = PCKDir.new(false)
 
 func _ready():
-	$VBoxContainer/HBoxContainer/Button.icon = get_icon("Search", "EditorIcons")
+	$VBoxContainer/HBoxContainer/Button.icon = get_theme_icon("Search", "EditorIcons")
 
 func _parseFiles():
 	tree.clear()
@@ -17,7 +17,7 @@ func _parseFiles():
 	var n = lineEdit.text.split("/")
 	n = n[n.size()-1]
 	root.set_text(0,n)
-	root.set_icon(0,get_icon("File", "EditorIcons"))
+	root.set_icon(0, get_theme_icon("File", "EditorIcons"))
 	
 	var drive_names = []
 	for drives in pckDir.get_drive_count():
@@ -25,7 +25,7 @@ func _parseFiles():
 		drive_names.append(drive)
 		var item = tree.create_item(root)
 		item.set_text(0,drive)
-		item.set_icon(0,get_icon("Filesystem", "EditorIcons"))
+		item.set_icon(0, get_theme_icon("Filesystem", "EditorIcons"))
 		
 		pckDir.change_dir(drive)
 		pckDir.list_dir_begin(true)
@@ -36,7 +36,7 @@ func _parseFiles():
 			if pckDir.current_is_dir():
 				var dir = tree.create_item(item)
 				dir.set_text(0,s)
-				dir.set_icon(0,get_icon("Folder", "EditorIcons"))
+				dir.set_icon(0, get_theme_icon("Folder", "EditorIcons"))
 				dirs.append(s)
 				_addDir(dir, pckDir.get_current_dir()+s, PCKDir.new(false,pckDir.get_raw()))
 			else:
@@ -85,11 +85,11 @@ func _on_Tree_item_selected():
 	var idx = 0
 	
 	for d in dirs:
-		itemList.add_item(d,get_icon("Folder", "EditorIcons"))
+		itemList.add_item(d, get_theme_icon("Folder", "EditorIcons"))
 		itemList.set_item_metadata(idx,data["cur_dir"])
 		idx+=1
 	for f in files:
-		itemList.add_item(f,get_icon("File", "EditorIcons"))
+		itemList.add_item(f, get_theme_icon("File", "EditorIcons"))
 		itemList.set_item_metadata(idx,data["cur_dir"])
 		idx+=1
 

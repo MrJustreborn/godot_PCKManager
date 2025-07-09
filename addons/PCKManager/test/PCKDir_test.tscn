@@ -1,9 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://dr1jf3oxk0ld4"]
 
-[ext_resource path="res://addons/PCKManager/test/PCKDir_test.gd" type="Script" id=1]
+[ext_resource type="Script" uid="uid://j0d0bsc1w02" path="res://addons/PCKManager/test/PCKDir_test.gd" id="1"]
 
 [node name="Node" type="Node"]
-
-script = ExtResource( 1 )
-
-
+script = ExtResource("1")

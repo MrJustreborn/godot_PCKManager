@@ -37,4 +37,3 @@ func _ready():
 		print(s, " -> ", dir.current_is_dir())
 		s = dir.get_next()
 	
-
