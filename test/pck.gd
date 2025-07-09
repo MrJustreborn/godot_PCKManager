@@ -3,7 +3,7 @@ extends EditorScript
 
 func _run():
 	var packer = PCKPacker.new()
-	packer.pck_start("res://test/test.pck",0)
+	packer.pck_start("res://test/test.pck", 32, "0000000000000000000000000000000000000000000000000000000000000000", false)
 	packer.add_file("res://icon.png","res://icon.png")
 	packer.add_file("res://icon2.png","res://icon.png")
 	packer.add_file("res://test/icon.png","res://icon.png")
@@ -13,19 +13,42 @@ func _run():
 	packer.flush(true)
 	
 	
-	#{GDPC}{int32_version}{int32_major}{int32_minor}{int32_revision} 16x{int32_reserved}{files_count}
+	#{GDPC}{int32_version}{int32_major}{int32_minor}{int32_patch}{int32_flags}{int64_file_base}{int64_dir_base}{files_count}
 	#{Path-String}
 	
 	print("\n\n===============\n")
 	
 	#file.set_endian_swap(true)
-	var file := FileAccess.open("res://addons/PCKManager/test/test.pck", FileAccess.READ)
+	var file := FileAccess.open("res://test/test.pck", FileAccess.READ)
+	
+	prints("POS:", file.get_position())
 	
 	print(str(file.get_32() == 0x43504447))
-	print("Version: ",file.get_32()," / Major: ",file.get_32()," / Minor: ",file.get_32()," / Revision: ",file.get_32())
+	prints("POS:", file.get_position())
+	print(
+		"Version: ", file.get_32(),
+		" / Major: ", file.get_32(),
+		" / Minor: ", file.get_32(),
+		" / Patch: ", file.get_32(),
+		" / Flags: ", file.get_32())
 	
-	for i in range(16):
-		file.get_32()
+	prints("POS:", file.get_position())
+	
+	var file_base_ofs = file.get_64()
+	#var dir_base_ofs = file.get_64()
+	
+	print("File: %X" % file_base_ofs)
+	#print("Dir: %X" % dir_base_ofs)
+	
+	for i in range(16): # Reserved
+		prints("Reserved", file.get_position(), file.get_32())
+
+	
+	#file.seek(dir_base_ofs)
+	
+	#var pad = _get_pad(32, file.get_position())
+	#for i in range(pad): # Padding
+		#prints("PAD", file.get_position(), file.get_8())
 	
 	var file_count = file.get_32()
 	print("Files: ", file_count)
@@ -41,19 +64,33 @@ func _run():
 		var offset =  file.get_64()
 		var size = file.get_64()
 		var md5 = file.get_buffer(16)
-		print("offset: ", offset, " / Size: ", size, " / md5: ",md5)
+		print("offset: ", offset, " / Size: ", size, " / md5: ", md5, " / flags: ", file.get_32())
 	
-	file.seek(413)
-	var png = file.get_buffer(71896)
+		var pos = file.get_position()
+		file.seek(file_base_ofs + offset)
+		var png = file.get_buffer(size)
+		file.seek(pos)
+		
+		#var ts := FileAccess.open("res://test/test.png", FileAccess.WRITE)
+		#ts.store_buffer(png)
+		#ts.flush()
 	
-	print(png.size())
+		print(png.size())
 	
 	file.close()
 	
-	file = FileAccess.open("res://addons/PCKManager/test/test.png", FileAccess.WRITE)
-	file.store_buffer(png)
-	file.close()
+	#file = FileAccess.open("res://addons/PCKManager/test/test.png", FileAccess.WRITE)
+	#file.store_buffer(png)
+	#file.close()
 	
 	print("\n\n===============\n")
 	
 	pass
+
+
+func _get_pad(p_alignment: int, p_n: int) -> int:
+	var rest := p_n % p_alignment
+	var pad := 0
+	if rest > 0:
+		pad = p_alignment - rest
+	return pad
