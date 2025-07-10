@@ -1,7 +1,20 @@
 @tool
 extends EditorScript
 
-func _run():
+func _run() -> void:
+	var pck_dir = preload("res://addons/PCKManager/PCKDirAccess.gd").new()
+	
+	print("\n\nNEW\n")
+	var p = pck_dir.get_paths("res://test/test.pck")
+	for f in p:
+		print(f)
+	
+	print("\n\nOLD\n")
+	p = pck_dir.get_paths("res://test/test_old.pck")
+	for f in p:
+		print(f)
+
+func _run2():
 	var packer = PCKPacker.new()
 	packer.pck_start("res://test/test.pck", 32, "0000000000000000000000000000000000000000000000000000000000000000", false)
 	packer.add_file("res://icon.png","res://icon.png")

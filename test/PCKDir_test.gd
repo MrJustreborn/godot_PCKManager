@@ -25,7 +25,7 @@ func _ready():
 	print("===add dirs===")
 	
 	print("common: ",dir.get_common_paths("res://test.pck"))
-	dir.add_pck("res://addons/PCKManager/test/test.pck",false)
+	dir.add_pck("res://test/test_old.pck",false)
 	
 	print("===list new dirs===")
 	
