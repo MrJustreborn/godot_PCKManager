@@ -131,12 +131,5 @@ func _pck_path_v2() -> Array[String]:
 		var size = file.get_64()
 		var md5 = file.get_buffer(16)
 		var flags_file = file.get_32()
-		
-		if path == "test/pck.gd.remap":#"project.binary":
-			var pos = file.get_position()
-			file.seek(file_base_ofs + offset)
-			var settings = file.get_buffer(size)
-			file.seek(pos)
-			prints("Project.bin: \n", settings.get_string_from_utf8())
 	
 	return files

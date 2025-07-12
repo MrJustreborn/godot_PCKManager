@@ -15,17 +15,18 @@ func _run() -> void:
 	
 	var pck_dir = preload("res://addons/PCKManager/PCKDirAccess.gd").new()
 	
-	#print("\n\nNEW\n")
-	#var p = pck_dir.get_paths("res://dist_test/test_exp.pck")
-	#for f in p:
-		#print(f)
-	
-	print("\n\nOLD\n")
+	print("\n\nNEW\n")
 	pck_dir.open("res://dist_test/test.pck")
 	var p = pck_dir.get_paths()
 	for f in p:
 		print(f)
-	prints(pck_dir.get_buffer("addons/PCKManager/PCKDirAccess.gd.remap").get_string_from_utf8())
+	
+	print("\n\nOLD\n")
+	pck_dir.open("res://dist_test/test.pck.bak")
+	p = pck_dir.get_paths()
+	for f in p:
+		print(f)
+	#prints(pck_dir.get_buffer("addons/PCKManager/PCKDirAccess.gd.remap").get_string_from_utf8())
 	pck_dir.close()
 
 func _run2():
