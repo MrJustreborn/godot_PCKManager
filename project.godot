@@ -16,6 +16,10 @@ run/main_scene="res://test/PCKDir_test.tscn"
 config/features=PackedStringArray("4.4")
 config/icon="res://icon.png"
 
+[autoload]
+
+PckLoader="*res://addons/PCKManager/pck_loader.gd"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/PCKManager/plugin.cfg")

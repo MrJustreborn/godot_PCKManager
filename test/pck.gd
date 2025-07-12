@@ -2,17 +2,31 @@
 extends EditorScript
 
 func _run() -> void:
+	#var exp = EditorExportPlatformLinuxBSD.new()
+	#var preset = exp.create_preset()
+	#prints(preset.get_custom_features())
+	#exp.export_pack_patch(preset, false, "res://dist_test/test_exp.pck")#, ["res://dist_test/test.pck"])
+	
+	#for i in range(10):
+		#var tmp = FileAccess.create_temp(FileAccess.WRITE_READ, "DEL_ME", "ROLF")
+		#tmp.store_8(3)
+		#print(tmp.get_path_absolute())
+		#tmp.close()
+	
 	var pck_dir = preload("res://addons/PCKManager/PCKDirAccess.gd").new()
 	
-	print("\n\nNEW\n")
-	var p = pck_dir.get_paths("res://test/test.pck")
-	for f in p:
-		print(f)
+	#print("\n\nNEW\n")
+	#var p = pck_dir.get_paths("res://dist_test/test_exp.pck")
+	#for f in p:
+		#print(f)
 	
 	print("\n\nOLD\n")
-	p = pck_dir.get_paths("res://test/test_old.pck")
+	pck_dir.open("res://dist_test/test.pck")
+	var p = pck_dir.get_paths()
 	for f in p:
 		print(f)
+	prints(pck_dir.get_buffer("addons/PCKManager/PCKDirAccess.gd.remap").get_string_from_utf8())
+	pck_dir.close()
 
 func _run2():
 	var packer = PCKPacker.new()
