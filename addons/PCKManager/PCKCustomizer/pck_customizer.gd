@@ -107,9 +107,9 @@ func _create_pck(files, path = pck_path) -> Array[String]:
 func _add_file(buff: PackedByteArray, packer: PCKPacker, ff: String) -> FileAccess:
 	var tmp = FileAccess.create_temp(FileAccess.WRITE_READ, "pck_customizer", "bin", true)
 	tmp.store_buffer(buff)
-	prints("pack file", tmp.get_path_absolute())
-	packer.add_file(ff, tmp.get_path_absolute())
 	tmp.close()
+	prints("pack file", ff, tmp.get_path_absolute())
+	packer.add_file(ff, tmp.get_path_absolute())
 	return tmp
 
 func split_pck() -> void:
