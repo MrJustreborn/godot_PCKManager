@@ -15,9 +15,14 @@ func _run() -> void:
 	
 	var pck_dir = preload("res://addons/PCKManager/PCKDirAccess.gd").new()
 	
-	print("\n\nNEW\n")
+	print("\n\nNEW:test.pck\n")
 	pck_dir.open("res://dist_test/test.pck")
 	var p = pck_dir.get_paths()
+	for f in p:
+		print(f)
+	print("\n\nNEW:data.pck\n")
+	pck_dir.open("res://dist_test/data.pck")
+	p = pck_dir.get_paths()
 	for f in p:
 		print(f)
 	
