@@ -20,8 +20,15 @@ func _run() -> void:
 	var p = pck_dir.get_paths()
 	for f in p:
 		print(f)
-	print("\n\nNEW:data.pck\n")
-	pck_dir.open("res://dist_test/data.pck")
+	
+	print("\n\nNEW:dlc_1.pck\n")
+	pck_dir.open("res://dist_test/dlc_1.pck")
+	p = pck_dir.get_paths()
+	for f in p:
+		print(f)
+	
+	print("\n\nNEW:dlc_2.pck\n")
+	pck_dir.open("res://dist_test/dlc_2.pck")
 	p = pck_dir.get_paths()
 	for f in p:
 		print(f)

@@ -2,6 +2,8 @@ extends Node
 
 
 func _ready():
+	$Icon.texture = preload("res://dlcs/dlc_1/icon.png")
+	
 	var dir = load("res://addons/PCKManager/PCKDirectory.gd").new()
 	
 	dir.change_dir("res://addons/PCKManager/test/")

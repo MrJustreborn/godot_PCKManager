@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://dr1jf3oxk0ld4"]
+[gd_scene load_steps=3 format=3 uid="uid://dr1jf3oxk0ld4"]
 
 [ext_resource type="Script" uid="uid://j0d0bsc1w02" path="res://test/PCKDir_test.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://d0qnm8qlaem1r" path="res://icon.png" id="2_nrbtf"]
 
 [node name="Node" type="Node"]
 script = ExtResource("1")
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(489, 285)
+texture = ExtResource("2_nrbtf")
