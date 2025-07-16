@@ -133,10 +133,6 @@ func _populate_pcks_files() -> void:
 	for f in dlc_files.get_children():
 		f.queue_free()
 	
-	for key: String in cfg_file.get_section_keys(CFG_SECTION):
-		if !selected_top_folders.has(key):
-			cfg_file.erase_section_key(CFG_SECTION, key)
-	
 	for path: String in selected_top_folders:
 		var default_pck_path := "dlcs/" + path.get_file() + ".pck"
 		var toAdd = DLC_FILE_ITEM.instantiate()
@@ -145,8 +141,8 @@ func _populate_pcks_files() -> void:
 		dlc_files.add_child(toAdd)
 		if !cfg_file.has_section_key(CFG_SECTION, path):
 			cfg_file.set_value("DLC_PCKs", path, toAdd.get_pck_path())
-	cfg_file.save(CFG_FILE)
-	_check_errors()
+	
+	#_check_errors()
 
 func _on_dlc_file_tree_item_edited() -> void:
 	var edited_item := dlc_file_tree.get_edited()
@@ -184,6 +180,13 @@ func _check_errors() -> void:
 
 func _on_save_pck_file_cfgs_pressed() -> void:
 	_check_errors()
+	
+	var selected_top_folders = get_top_level_checked_folders()
+	for key: String in cfg_file.get_section_keys(CFG_SECTION):
+		if !selected_top_folders.has(key):
+			cfg_file.erase_section_key(CFG_SECTION, key)
+	
 	for child in dlc_files.get_children():
 		cfg_file.set_value("DLC_PCKs", child.get_title(), child.get_pck_path())
+	
 	cfg_file.save(CFG_FILE)
