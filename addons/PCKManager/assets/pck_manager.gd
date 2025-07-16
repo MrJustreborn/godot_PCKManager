@@ -146,6 +146,7 @@ func _populate_pcks_files() -> void:
 		if !cfg_file.has_section_key(CFG_SECTION, path):
 			cfg_file.set_value("DLC_PCKs", path, toAdd.get_pck_path())
 	cfg_file.save(CFG_FILE)
+	_check_errors()
 
 func _on_dlc_file_tree_item_edited() -> void:
 	var edited_item := dlc_file_tree.get_edited()
@@ -166,8 +167,23 @@ func _on_dlc_file_tree_item_edited() -> void:
 
 	_populate_pcks_files()
 
+func _check_errors() -> void:
+	var pck_path_cnt: Dictionary = {}
+	
+	for child in dlc_files.get_children():
+		var path = child.get_pck_path()
+		if pck_path_cnt.has(path):
+			pck_path_cnt[path] += 1
+		else:
+			pck_path_cnt[path] = 1
+	
+	for child in dlc_files.get_children():
+		var path = child.get_pck_path()
+		child.set_error(pck_path_cnt[path] > 1)
+
 
 func _on_save_pck_file_cfgs_pressed() -> void:
+	_check_errors()
 	for child in dlc_files.get_children():
 		cfg_file.set_value("DLC_PCKs", child.get_title(), child.get_pck_path())
 	cfg_file.save(CFG_FILE)

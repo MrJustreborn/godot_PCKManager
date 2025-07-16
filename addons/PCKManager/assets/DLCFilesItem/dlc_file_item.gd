@@ -15,3 +15,9 @@ func set_pck_path(path: String) -> void:
 
 func get_pck_path() -> String:
 	return $Path.text
+
+func set_error(err: bool) -> void:
+	if err:
+		$Logo.texture = get_theme_icon("NodeWarning", "EditorIcons")
+	else:
+		$Logo.texture = get_theme_icon("Object", "EditorIcons")
