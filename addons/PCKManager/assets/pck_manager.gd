@@ -6,7 +6,17 @@ extends Control
 
 const DLC_FILE_ITEM = preload("res://addons/PCKManager/assets/DLCFilesItem/dlc_file_item.tscn")
 
+var cfg_file: ConfigFile
+
+const CFG_FILE := "res://dlc_config.cfg"
+const CFG_SECTION := "DLC_PCKs"
+
 func _ready() -> void:
+	cfg_file = ConfigFile.new()
+	if !FileAccess.file_exists(CFG_FILE):
+		cfg_file.save(CFG_FILE)
+	cfg_file.load(CFG_FILE)
+	
 	dlc_file_tree.columns = 1
 	dlc_file_tree.hide_root = false
 	dlc_file_tree.allow_reselect = true
@@ -19,6 +29,7 @@ func _ready() -> void:
 	#root.set_editable(0, true)
 
 	_populate_folders("res://", root)
+	_populate_pcks_files()
 
 func _populate_folders(path: String, parent: TreeItem, collapsed := false) -> void:
 	var dir = DirAccess.open(path)
@@ -33,7 +44,7 @@ func _populate_folders(path: String, parent: TreeItem, collapsed := false) -> vo
 			item.set_cell_mode(0, TreeItem.CELL_MODE_CHECK)
 			item.set_text(0, folder_name)
 			item.set_icon(0, get_theme_icon("Folder", "EditorIcons"))
-			item.set_checked(0, false)
+			item.set_checked(0, cfg_file.has_section_key(CFG_SECTION, full_path))
 			item.set_editable(0, true)
 			#if folder_name == "addons" || collapsed:
 				#item.collapsed = true
@@ -52,7 +63,6 @@ func get_top_level_checked_folders() -> Array[String]:
 	var root = dlc_file_tree.get_root()
 	_collect_top_checked(root, "res://", false, result)
 	return result
-
 
 func _collect_checked_folders(item: TreeItem, current_path: String, result: Array[String]) -> void:
 	if item == null:
@@ -89,8 +99,6 @@ func _collect_top_checked(item: TreeItem, current_path: String, parent_checked: 
 		child = child.get_next()
 
 
-
-
 func _propagate_check_to_children(item: TreeItem, checked: bool) -> void:
 	var child := item.get_first_child()
 	while child:
@@ -119,6 +127,26 @@ func _uncheck_siblings(item: TreeItem) -> void:
 			_propagate_check_to_children(sibling, false)
 		sibling = sibling.get_next()
 
+func _populate_pcks_files() -> void:
+	var selected_top_folders = get_top_level_checked_folders()
+	
+	for f in dlc_files.get_children():
+		f.queue_free()
+	
+	for key: String in cfg_file.get_section_keys(CFG_SECTION):
+		if !selected_top_folders.has(key):
+			cfg_file.erase_section_key(CFG_SECTION, key)
+	
+	for path: String in selected_top_folders:
+		var default_pck_path := "dlcs/" + path.get_file() + ".pck"
+		var toAdd = DLC_FILE_ITEM.instantiate()
+		toAdd.set_title(path)
+		toAdd.set_pck_path(cfg_file.get_value(CFG_SECTION, path, default_pck_path))
+		dlc_files.add_child(toAdd)
+		if !cfg_file.has_section_key(CFG_SECTION, path):
+			cfg_file.set_value("DLC_PCKs", path, toAdd.get_pck_path())
+	cfg_file.save(CFG_FILE)
+
 func _on_dlc_file_tree_item_edited() -> void:
 	var edited_item := dlc_file_tree.get_edited()
 	if edited_item == null:
@@ -136,13 +164,10 @@ func _on_dlc_file_tree_item_edited() -> void:
 				# Uncheck all parent folders
 		_uncheck_parents(edited_item)
 
-	var selected_top_folders = get_top_level_checked_folders()
-	
-	for f in dlc_files.get_children():
-		f.queue_free()
-	for path: String in selected_top_folders:
-		#prints("DLC-PCK",path)
-		var toAdd = DLC_FILE_ITEM.instantiate()
-		toAdd.set_title(path)
-		toAdd.set_path("dlcs/" + path.get_file() + ".pck")
-		dlc_files.add_child(toAdd)
+	_populate_pcks_files()
+
+
+func _on_save_pck_file_cfgs_pressed() -> void:
+	for child in dlc_files.get_children():
+		cfg_file.set_value("DLC_PCKs", child.get_title(), child.get_pck_path())
+	cfg_file.save(CFG_FILE)

@@ -77,9 +77,14 @@ size_flags_vertical = 3
 layout_mode = 2
 text = "TODO: supply info text"
 
+[node name="SavePCKFileCfgs" type="Button" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer"]
+layout_mode = 2
+text = "Save"
+
 [node name="PCK Inspector" type="HBoxContainer" parent="MarginContainer/TabContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
 [connection signal="item_edited" from="MarginContainer/TabContainer/DLC Manager/VBoxContainer2/DLCFileTree" to="." method="_on_dlc_file_tree_item_edited"]
+[connection signal="pressed" from="MarginContainer/TabContainer/DLC Manager/VBoxContainer/SavePCKFileCfgs" to="." method="_on_save_pck_file_cfgs_pressed"]

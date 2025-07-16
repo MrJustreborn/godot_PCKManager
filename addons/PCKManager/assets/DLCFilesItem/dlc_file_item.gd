@@ -7,5 +7,11 @@ func _ready() -> void:
 func set_title(title: String) -> void:
 	$Title.text = title
 
-func set_path(path: String) -> void:
+func get_title() -> String:
+	return $Title.text
+
+func set_pck_path(path: String) -> void:
 	$Path.text = path
+
+func get_pck_path() -> String:
+	return $Path.text
