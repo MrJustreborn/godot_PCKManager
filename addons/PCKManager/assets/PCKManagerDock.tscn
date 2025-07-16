@@ -1,5 +1,67 @@
-[gd_scene format=3 uid="uid://dk3f1o3r2jff6"]
+[gd_scene load_steps=2 format=3 uid="uid://dk3f1o3r2jff6"]
+
+[ext_resource type="Script" uid="uid://usq652j31sf" path="res://addons/PCKManager/assets/pck_manager.gd" id="1_erdk0"]
 
 [node name="PCKManager" type="Control"]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_erdk0")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="TabContainer" type="TabContainer" parent="MarginContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="DLC Manager" type="HBoxContainer" parent="MarginContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/TabContainer/DLC Manager"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer2"]
+layout_mode = 2
+text = "TODO: Supply title"
+
+[node name="DLCFileTree" type="Tree" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/TabContainer/DLC Manager"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer"]
+layout_mode = 2
+text = "TODO: Supply title"
+
+[node name="ItemList" type="ItemList" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PCK Inspector" type="HBoxContainer" parent="MarginContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[connection signal="item_edited" from="MarginContainer/TabContainer/DLC Manager/VBoxContainer2/DLCFileTree" to="." method="_on_dlc_file_tree_item_edited"]
