@@ -46,6 +46,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+allow_reselect = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/TabContainer/DLC Manager"]
 layout_mode = 2
@@ -55,9 +56,26 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "TODO: Supply title"
 
-[node name="ItemList" type="ItemList" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "export-path:"
+
+[node name="ExportPath" type="LineEdit" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="DLCFiles" type="VBoxContainer" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InfoText" type="Label" parent="MarginContainer/TabContainer/DLC Manager/VBoxContainer"]
+layout_mode = 2
+text = "TODO: supply info text"
 
 [node name="PCK Inspector" type="HBoxContainer" parent="MarginContainer/TabContainer"]
 visible = false

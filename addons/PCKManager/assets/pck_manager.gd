@@ -2,7 +2,9 @@
 extends Control
 
 @onready var dlc_file_tree: Tree = %DLCFileTree
+@onready var dlc_files: VBoxContainer = %DLCFiles
 
+const DLC_FILE_ITEM = preload("res://addons/PCKManager/assets/DLCFilesItem/dlc_file_item.tscn")
 
 func _ready() -> void:
 	dlc_file_tree.columns = 1
@@ -134,8 +136,13 @@ func _on_dlc_file_tree_item_edited() -> void:
 				# Uncheck all parent folders
 		_uncheck_parents(edited_item)
 
-	print("\nDLCs:")
-	#prints(get_checked_folders())
 	var selected_top_folders = get_top_level_checked_folders()
-	for path in selected_top_folders:
-		prints("DLC-PCK",path)
+	
+	for f in dlc_files.get_children():
+		f.queue_free()
+	for path: String in selected_top_folders:
+		#prints("DLC-PCK",path)
+		var toAdd = DLC_FILE_ITEM.instantiate()
+		toAdd.set_title(path)
+		toAdd.set_path("dlcs/" + path.get_file() + ".pck")
+		dlc_files.add_child(toAdd)
