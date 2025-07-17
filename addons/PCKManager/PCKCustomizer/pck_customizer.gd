@@ -87,7 +87,7 @@ func _export_end() -> void:
 			var paths = cfg_file.get_section_keys(CFG_SECTION)
 			for p in paths:
 				_create_pck(
-					_filter_paths(pck_dir, p),
+					_filter_paths(pck_dir, p.trim_prefix("res://")),
 					pck_path.get_base_dir() + "/" + cfg_file.get_value(CFG_SECTION, p)
 				)
 		
