@@ -136,7 +136,7 @@ func _populate_pcks_files() -> void:
 		f.queue_free()
 	
 	for path: String in selected_top_folders:
-		var default_pck_path := "dlcs/" + path.get_file() + ".pck"
+		var default_pck_path := path.trim_prefix("res://") + ".pck"
 		var toAdd = DLC_FILE_ITEM.instantiate()
 		toAdd.set_title(path)
 		toAdd.set_pck_path(cfg_file.get_value(CFG_SECTION, path, default_pck_path))
