@@ -8,7 +8,7 @@ const DLC_FILE_ITEM = preload("res://addons/PCKManager/assets/DLCFilesItem/dlc_f
 
 var cfg_file: ConfigFile
 
-const CFG_FILE := "res://pck_split_config.cfg"
+const CFG_FILE := "res://pck_manager.cfg"
 const CFG_SECTION := "PCK_splits"
 
 func save_cfg() -> void:
@@ -183,10 +183,11 @@ func _check_errors() -> void:
 func _on_save_pck_file_cfgs_pressed() -> void:
 	_check_errors()
 	
-	var selected_top_folders = get_top_level_checked_folders()
-	for key: String in cfg_file.get_section_keys(CFG_SECTION):
-		if !selected_top_folders.has(key):
-			cfg_file.erase_section_key(CFG_SECTION, key)
+	if cfg_file.has_section(CFG_SECTION): # prevent error on first setup
+		var selected_top_folders = get_top_level_checked_folders()
+		for key: String in cfg_file.get_section_keys(CFG_SECTION):
+			if !selected_top_folders.has(key):
+				cfg_file.erase_section_key(CFG_SECTION, key)
 	
 	for child in dlc_files.get_children():
 		cfg_file.set_value(CFG_SECTION, child.get_title(), child.get_pck_path())

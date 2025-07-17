@@ -1,6 +1,6 @@
 extends EditorExportPlugin
 
-const CFG_FILE := "res://pck_split_config.cfg"
+const CFG_FILE := "res://pck_manager.cfg"
 const CFG_SECTION := "PCK_splits"
 
 var should_split_pck := false
