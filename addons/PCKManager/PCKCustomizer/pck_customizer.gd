@@ -6,9 +6,6 @@ const CFG_SECTION := "PCK_splits"
 var should_split_pck := false
 var pck_path := ""
 var pck_path_bak := ""
-var autoload_paths :Array[String] = []
-var forced_files :PackedStringArray = []
-var forced_files_internal :Dictionary = {}
 
 func _get_name() -> String:
 	return "PCKCustomizer"
@@ -17,24 +14,6 @@ func _export_begin(features: PackedStringArray, is_debug: bool, path: String, fl
 	should_split_pck = get_option("export/split_pcks") and !get_option("binary_format/embed_pck")
 	pck_path = path.get_basename() + ".pck"
 	pck_path_bak = path.get_basename() + ".full.pck.bak"
-	
-	var main_scene = ProjectSettings.get_setting("application/run/main_scene").get_slice("*res://", 1)
-	
-	forced_files = get_export_platform().get_forced_export_files();
-	forced_files.append("project.binary")
-	forced_files.append("default_env.tres")
-	forced_files.append("addons/PCKManager/PCKDirectory.gd")
-	forced_files.append("icon.png.import")
-	forced_files.append(".godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.ctex")
-	forced_files.append(main_scene)
-	for dependency in ResourceLoader.get_dependencies(main_scene):
-		forced_files.append(dependency.get_slice("::", 2))
-	
-	forced_files_internal = get_export_platform().get_internal_export_files(get_export_preset(), is_debug)
-	
-	var _autoloads = ProjectSettings.get_property_list().filter(func(p): return p.name.begins_with("autoload/"))
-	for _a in _autoloads:
-		autoload_paths.append("res://" + ProjectSettings.get_setting(_a.name).get_slice("*res://", 1))
 
 func _supports_platform(platform: EditorExportPlatform) -> bool:
 	return platform is EditorExportPlatformPC
@@ -52,6 +31,13 @@ func _get_export_options(platform: EditorExportPlatform) -> Array[Dictionary]:
 func _export_end() -> void:
 	if should_split_pck:
 		prints("Split PCK:", pck_path)
+		
+		var cfg_file: ConfigFile = ConfigFile.new()
+		if !FileAccess.file_exists(CFG_FILE):
+			printerr("Cannot open %s" % CFG_FILE)
+			return
+		cfg_file.load(CFG_FILE)
+		
 		var old_pck = DirAccess.open(pck_path.get_base_dir())
 		if old_pck == null:
 			prints("Error opening dir:", DirAccess.get_open_error())
@@ -63,25 +49,17 @@ func _export_end() -> void:
 		var all_files = pck_dir.get_paths()
 		
 		var base_files = []
-		#base_files.append_array(forced_files)
-		#base_files.append_array(autoload_paths)
+		var split_files = []
+		if cfg_file.has_section(CFG_SECTION):
+			var paths = cfg_file.get_section_keys(CFG_SECTION)
+			for p in paths:
+				split_files.append_array(_filter_paths(pck_dir,  p.trim_prefix("res://")))
 		
-		var added_files = _filter_paths(pck_dir)
 		base_files = all_files.filter(func(item):
-			return !added_files.has(item)
+			return !split_files.has(item)
 		)
 		
-		added_files = _create_pck(base_files)
-		
-		all_files = all_files.filter(func(item):
-			return !added_files.has(item)
-		)
-		
-		var cfg_file: ConfigFile = ConfigFile.new()
-		if !FileAccess.file_exists(CFG_FILE):
-			printerr("Cannot open %s" % CFG_FILE)
-			return
-		cfg_file.load(CFG_FILE)
+		_create_pck(base_files)
 		
 		if cfg_file.has_section(CFG_SECTION):
 			var paths = cfg_file.get_section_keys(CFG_SECTION)
@@ -97,11 +75,8 @@ func _export_end() -> void:
 	should_split_pck = false
 	pck_path = ""
 	pck_path_bak = ""
-	autoload_paths = []
-	forced_files = []
-	forced_files_internal = {}
 
-func _filter_paths(pck_dir, path := "dlcs/") -> Array[String]:
+func _filter_paths(pck_dir, path) -> Array[String]:
 	var all_files = pck_dir.get_paths()
 	var filtered :Array[String] = []
 	
@@ -134,7 +109,6 @@ func _create_pck(files, path = pck_path) -> Array[String]:
 	var tmp_files :Array[FileAccess] = []
 	for ff in files:
 		ff = ff.get_slice("res://", 1)
-		#prints("Add file", ff)
 		var buff = pck_dir.get_buffer(ff)
 		if !buff:
 			buff = pck_dir.get_buffer(ff + ".remap")
@@ -162,6 +136,5 @@ func _add_file(buff: PackedByteArray, packer: PCKPacker, ff: String) -> FileAcce
 	var tmp = FileAccess.create_temp(FileAccess.WRITE_READ, "pck_customizer", "bin", true)
 	tmp.store_buffer(buff)
 	tmp.close()
-	#prints("pack file", ff, tmp.get_path_absolute())
 	packer.add_file(ff, tmp.get_path_absolute())
 	return tmp
