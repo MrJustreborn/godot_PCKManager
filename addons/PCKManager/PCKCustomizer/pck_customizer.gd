@@ -91,6 +91,8 @@ func _export_end() -> void:
 					pck_path.get_base_dir() + "/" + cfg_file.get_value(CFG_SECTION, p)
 				)
 		
+		if !cfg_file.get_value("settings", "keep_full_pck", true):
+			old_pck.remove(pck_path_bak.get_file())
 		
 	should_split_pck = false
 	pck_path = ""

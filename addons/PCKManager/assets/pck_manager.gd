@@ -18,6 +18,7 @@ func _ready() -> void:
 	cfg_file = ConfigFile.new()
 	if !FileAccess.file_exists(CFG_FILE):
 		cfg_file.save(CFG_FILE)
+		cfg_file.set_value("settings", "keep_full_pck", true)
 	cfg_file.load(CFG_FILE)
 	
 	dlc_file_tree.clear()
@@ -32,6 +33,7 @@ func _ready() -> void:
 
 	_populate_folders("res://", root)
 	_populate_pcks_files()
+	%KeepFullPCK.button_pressed = cfg_file.get_value("settings", "keep_full_pck", true)
 
 func _populate_folders(path: String, parent: TreeItem, collapsed := false) -> void:
 	var dir = DirAccess.open(path)
@@ -193,3 +195,7 @@ func _on_save_pck_file_cfgs_pressed() -> void:
 		cfg_file.set_value(CFG_SECTION, child.get_title(), child.get_pck_path())
 	
 	cfg_file.save(CFG_FILE)
+
+
+func _on_keep_full_pck_toggled(toggled_on: bool) -> void:
+	cfg_file.set_value("settings", "keep_full_pck", toggled_on)
