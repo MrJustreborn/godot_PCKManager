@@ -22,6 +22,7 @@ func _enter_tree() -> void:
 			#print(p)
 			#pass
 	
+	add_autoload_singleton("PCKLoader", "res://addons/PCKManager/pck_loader.gd")
 	add_export_plugin(PckCustomizer)
 	EditorInterface.get_editor_main_screen().add_child(managerDock)
 	_make_visible(false)
@@ -32,6 +33,7 @@ func _exit_tree() -> void:
 	#managerDock.free()
 	managerDock.free()
 	
+	remove_autoload_singleton("PCKLoader")
 	remove_export_plugin(PckCustomizer)
 
 func _has_main_screen() -> bool:
