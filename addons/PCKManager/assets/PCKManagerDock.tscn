@@ -39,7 +39,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="MarginContainer/TabContainer/PCK Splitter/VBoxContainer2"]
 layout_mode = 2
-text = "TODO: Supply title"
+text = "Select folders to exclude from the main PCK"
 
 [node name="DLCFileTree" type="Tree" parent="MarginContainer/TabContainer/PCK Splitter/VBoxContainer2"]
 unique_name_in_owner = true
@@ -54,7 +54,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="MarginContainer/TabContainer/PCK Splitter/VBoxContainer"]
 layout_mode = 2
-text = "TODO: Supply title"
+text = "Map selected folders to seperate PCKs"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/TabContainer/PCK Splitter/VBoxContainer"]
 visible = false
@@ -75,7 +75,8 @@ size_flags_vertical = 3
 
 [node name="InfoText" type="Label" parent="MarginContainer/TabContainer/PCK Splitter/VBoxContainer"]
 layout_mode = 2
-text = "TODO: supply info text"
+text = "Make sure to enable export/split_pcks in the export settings. The selected folders will be removed from the main PCK and put into their own PCK. The PCKLoader autoload will load every PCK in the execution path (recursively)."
+autowrap_mode = 3
 
 [node name="SavePCKFileCfgs" type="Button" parent="MarginContainer/TabContainer/PCK Splitter/VBoxContainer"]
 visible = false
