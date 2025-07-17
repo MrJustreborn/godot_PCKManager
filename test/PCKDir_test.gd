@@ -2,8 +2,19 @@ extends Node
 
 
 func _ready():
-	$Icon.texture = preload("res://dlcs/dlc_1/icon.png")
+	prints(
+		ResourceLoader.has_cached("res://dlcs/dlc_1/icon.png"),
+		ResourceLoader.has_cached("res://dlcs/dlc_2/icon.png")
+		)
+	#if ResourceLoader.exists("res://dlcs/dlc_1/icon.png"):
+		#$Icon.texture = load("res://dlcs/dlc_1/icon.png")
+	#elif ResourceLoader.exists("res://dlcs/dlc_2/icon.png"):
+		#$Icon.texture = load("res://dlcs/dlc_2/icon.png")
 	
+	await get_tree().create_timer(2).timeout
+	get_tree().change_scene_to_file("res://test/test_scene_2.tscn")
+	
+func test() -> void:
 	var dir = load("res://addons/PCKManager/PCKDirectory.gd").new()
 	
 	dir.change_dir("res://addons/PCKManager/test/")
