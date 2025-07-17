@@ -45,6 +45,8 @@ func _make_visible(visible: bool) -> void:
 		managerDock.visible = visible
 		if !visible:
 			managerDock.save_cfg()
+		else:
+			managerDock._ready()
 
 
 func _get_plugin_name() -> String:

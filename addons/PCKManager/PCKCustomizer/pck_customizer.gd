@@ -1,10 +1,11 @@
 extends EditorExportPlugin
 
-#var flag_main := false
-#var flag_second := false
+const CFG_FILE := "res://pck_split_config.cfg"
+const CFG_SECTION := "PCK_splits"
 
 var should_split_pck := false
 var pck_path := ""
+var pck_path_bak := ""
 var autoload_paths :Array[String] = []
 var forced_files :PackedStringArray = []
 var forced_files_internal :Dictionary = {}
@@ -15,6 +16,7 @@ func _get_name() -> String:
 func _export_begin(features: PackedStringArray, is_debug: bool, path: String, flags: int) -> void:
 	should_split_pck = get_option("export/split_pcks") and !get_option("binary_format/embed_pck")
 	pck_path = path.get_basename() + ".pck"
+	pck_path_bak = path.get_basename() + ".full.pck.bak"
 	
 	var main_scene = ProjectSettings.get_setting("application/run/main_scene").get_slice("*res://", 1)
 	
@@ -53,11 +55,11 @@ func _export_end() -> void:
 		var old_pck = DirAccess.open(pck_path.get_base_dir())
 		if old_pck == null:
 			prints("Error opening dir:", DirAccess.get_open_error())
-		old_pck.copy(pck_path, pck_path + ".bak")
+		old_pck.copy(pck_path, pck_path_bak)
 		old_pck.remove(pck_path.get_file())
 		
 		var pck_dir = preload("res://addons/PCKManager/PCKDirAccess.gd").new()
-		pck_dir.open(pck_path + ".bak")
+		pck_dir.open(pck_path_bak)
 		var all_files = pck_dir.get_paths()
 		
 		var base_files = []
@@ -75,26 +77,24 @@ func _export_end() -> void:
 			return !added_files.has(item)
 		)
 		
-		var dlc_dir = DirAccess.open("res://dlcs")
-		if dlc_dir:
-			dlc_dir.list_dir_begin()
-			var folder_name = dlc_dir.get_next()
-			while folder_name != "":
-				if dlc_dir.current_is_dir() and folder_name != "." and folder_name != "..":
-					_create_pck(
-						_filter_paths(pck_dir, "dlcs/" + folder_name),
-						pck_path.get_base_dir() + "/" + folder_name + ".pck"
-					)
-				folder_name = dlc_dir.get_next()
-			dlc_dir.list_dir_end()
-		else:
-			print("Failed to open dlcs directory.")
+		var cfg_file: ConfigFile = ConfigFile.new()
+		if !FileAccess.file_exists(CFG_FILE):
+			printerr("Cannot open %s" % CFG_FILE)
+			return
+		cfg_file.load(CFG_FILE)
 		
-		#added_files = _create_pck(all_files, pck_path.get_base_dir() + "/data.pck")
+		if cfg_file.has_section(CFG_SECTION):
+			var paths = cfg_file.get_section_keys(CFG_SECTION)
+			for p in paths:
+				_create_pck(
+					_filter_paths(pck_dir, p),
+					pck_path.get_base_dir() + "/" + cfg_file.get_value(CFG_SECTION, p)
+				)
 		
 		
 	should_split_pck = false
 	pck_path = ""
+	pck_path_bak = ""
 	autoload_paths = []
 	forced_files = []
 	forced_files_internal = {}
@@ -117,9 +117,14 @@ func _filter_paths(pck_dir, path := "dlcs/") -> Array[String]:
 
 func _create_pck(files, path = pck_path) -> Array[String]:
 	var pck_dir = preload("res://addons/PCKManager/PCKDirAccess.gd").new()
-	pck_dir.open(pck_path + ".bak")
+	pck_dir.open(pck_path_bak)
 	
 	var packed_files : Array[String] = []
+	
+	prints("Create PCK:", path)
+	if !DirAccess.dir_exists_absolute(path.get_base_dir()):
+		prints("Create folder", path.get_base_dir())
+		DirAccess.make_dir_recursive_absolute(path.get_base_dir())
 	
 	var packer = PCKPacker.new()
 	packer.pck_start(path)
@@ -158,6 +163,3 @@ func _add_file(buff: PackedByteArray, packer: PCKPacker, ff: String) -> FileAcce
 	#prints("pack file", ff, tmp.get_path_absolute())
 	packer.add_file(ff, tmp.get_path_absolute())
 	return tmp
-
-func split_pck() -> void:
-	var pck_dir = preload("res://addons/PCKManager/PCKDirAccess.gd").new()

@@ -8,8 +8,8 @@ const DLC_FILE_ITEM = preload("res://addons/PCKManager/assets/DLCFilesItem/dlc_f
 
 var cfg_file: ConfigFile
 
-const CFG_FILE := "res://dlc_config.cfg"
-const CFG_SECTION := "DLC_PCKs"
+const CFG_FILE := "res://pck_split_config.cfg"
+const CFG_SECTION := "PCK_splits"
 
 func save_cfg() -> void:
 	_on_save_pck_file_cfgs_pressed()
@@ -20,16 +20,15 @@ func _ready() -> void:
 		cfg_file.save(CFG_FILE)
 	cfg_file.load(CFG_FILE)
 	
+	dlc_file_tree.clear()
+	
 	dlc_file_tree.columns = 1
 	dlc_file_tree.hide_root = false
 	dlc_file_tree.allow_reselect = true
 	
 	var root = dlc_file_tree.create_item()
-	#root.set_cell_mode(0, TreeItem.CELL_MODE_CHECK)
 	root.set_text(0, "res://")
 	root.set_icon(0, get_theme_icon("Folder", "EditorIcons"))
-	#root.set_checked(0, false)
-	#root.set_editable(0, true)
 
 	_populate_folders("res://", root)
 	_populate_pcks_files()
@@ -143,7 +142,7 @@ func _populate_pcks_files() -> void:
 		toAdd.set_pck_path(cfg_file.get_value(CFG_SECTION, path, default_pck_path))
 		dlc_files.add_child(toAdd)
 		if !cfg_file.has_section_key(CFG_SECTION, path):
-			cfg_file.set_value("DLC_PCKs", path, toAdd.get_pck_path())
+			cfg_file.set_value(CFG_SECTION, path, toAdd.get_pck_path())
 	
 	#_check_errors()
 
@@ -190,6 +189,6 @@ func _on_save_pck_file_cfgs_pressed() -> void:
 			cfg_file.erase_section_key(CFG_SECTION, key)
 	
 	for child in dlc_files.get_children():
-		cfg_file.set_value("DLC_PCKs", child.get_title(), child.get_pck_path())
+		cfg_file.set_value(CFG_SECTION, child.get_title(), child.get_pck_path())
 	
 	cfg_file.save(CFG_FILE)
