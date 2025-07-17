@@ -100,8 +100,12 @@ func _create_pck(files, path = pck_path) -> Array[String]:
 	
 	prints("Create PCK:", path)
 	if !DirAccess.dir_exists_absolute(path.get_base_dir()):
-		prints("Create folder", path.get_base_dir())
+		prints(" > Create folder", path.get_base_dir())
 		DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	
+	if FileAccess.file_exists(path):
+		prints(" >", path, " already exists, deleting")
+		DirAccess.remove_absolute(path)
 	
 	var packer = PCKPacker.new()
 	packer.pck_start(path)
