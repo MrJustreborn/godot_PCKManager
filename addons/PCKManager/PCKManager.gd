@@ -41,6 +41,8 @@ func _has_main_screen() -> bool:
 func _make_visible(visible: bool) -> void:
 	if managerDock:
 		managerDock.visible = visible
+		if !visible:
+			managerDock.save_cfg()
 
 
 func _get_plugin_name() -> String:

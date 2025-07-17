@@ -11,6 +11,9 @@ var cfg_file: ConfigFile
 const CFG_FILE := "res://dlc_config.cfg"
 const CFG_SECTION := "DLC_PCKs"
 
+func save_cfg() -> void:
+	_on_save_pck_file_cfgs_pressed()
+
 func _ready() -> void:
 	cfg_file = ConfigFile.new()
 	if !FileAccess.file_exists(CFG_FILE):
