@@ -11,6 +11,7 @@ func _ready():
 	#elif ResourceLoader.exists("res://dlcs/dlc_2/icon.png"):
 		#$Icon.texture = load("res://dlcs/dlc_2/icon.png")
 	
+	
 	await get_tree().create_timer(2).timeout
 	get_tree().change_scene_to_file("res://test/test_scene_2.tscn")
 	
