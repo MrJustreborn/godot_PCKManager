@@ -8,19 +8,6 @@ var PckCustomizer = preload("res://addons/PCKManager/PCKCustomizer/pck_customize
 
 func _enter_tree() -> void:
 	managerDock = preload("res://addons/PCKManager/assets/PCKManagerDock.tscn").instantiate()
-	#inspectorDock = preload("res://addons/PCKManager/assets/PCKInspectorDock.tscn").instantiate()
-	
-	#add_control_to_dock( DOCK_SLOT_LEFT_UL, managerDock)
-	#add_control_to_dock( DOCK_SLOT_LEFT_BL, inspectorDock)
-	
-	
-	#var props = get_editor_interface().get_base_control().get_theme().get_property_list()
-	#print(get_editor_interface().get_base_control().get_theme().get_icon_list("EditorIcons"))
-	
-	#for p in props:
-		#if p.has("name") && p["name"].find("Folder")>0:
-			#print(p)
-			#pass
 	
 	add_autoload_singleton("PCKLoader", "res://addons/PCKManager/pck_loader.gd")
 	add_export_plugin(PckCustomizer)
@@ -28,9 +15,6 @@ func _enter_tree() -> void:
 	_make_visible(false)
 
 func _exit_tree() -> void:
-	#remove_control_from_docks( managerDock )
-	#remove_control_from_docks( inspectorDock )
-	#managerDock.free()
 	managerDock.free()
 	
 	remove_autoload_singleton("PCKLoader")
