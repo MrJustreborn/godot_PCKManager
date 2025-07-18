@@ -58,7 +58,6 @@ func _populate_pck_tree(root: TreeItem, pck_path: String) -> void:
 				current_parent = existing_items[current_path]
 
 func _on_open_folder_pressed() -> void:
-	prints("HERERER")
 	$FileDialog.popup_centered()
 
 func _on_file_dialog_dir_selected(dir: String) -> void:
