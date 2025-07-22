@@ -1,13 +1,13 @@
 extends Node
 
-func _init(load: bool = false) -> void:
+func _init() -> void:
+	var load = true
+	if ProjectSettings.has_setting("PCKLoader/autoload"):
+		load = ProjectSettings.get("PCKLoader/autoload")
+	
 	if !load:
-		if ProjectSettings.has_setting("PCKLoader/autoload"):
-			load = ProjectSettings.get("PCKLoader/autoload")
-		
-		if !load:
-			prints("Autoload disabled! - Skipping PCK initial loading")
-			return
+		prints("Autoload disabled! - Skipping PCK initial loading")
+		return
 	
 	if OS.has_feature("editor") and false:
 		prints("Running from editor! - Skipping PCK loading")
