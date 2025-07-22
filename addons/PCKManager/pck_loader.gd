@@ -2,9 +2,7 @@ extends Node
 
 
 func _init() -> void:
-	var load := true
-	if ProjectSettings.has_setting("PCKLoader/autoload"):
-		load = ProjectSettings.get("PCKLoader/autoload")
+	var load = ProjectSettings.get_setting("pck_manager/pck_loader/autoload_all_pck", true)
 	
 	if !load:
 		prints("Autoload disabled! - Skipping PCK initial loading")
