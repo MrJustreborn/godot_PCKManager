@@ -17,7 +17,7 @@ func _init() -> void:
 func load_pck_files(path: String = "") -> void:
 	var base_path := OS.get_executable_path().get_base_dir()
 	if !path.is_empty():
-		base_path += "/" + path + "/"
+		base_path += "/" + path
 	_load_pck_files_recursive(base_path)
 
 func _load_pck_files_recursive(path: String) -> void:
