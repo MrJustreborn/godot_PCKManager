@@ -23,14 +23,14 @@ func _exit_tree() -> void:
 	remove_export_plugin(PckCustomizer)
 
 func _add_project_settings() -> void:
-	if (!ProjectSettings.has_setting("PCKLoader/autoload")):
-		ProjectSettings.set_setting("PCKLoader/autoload", true)
+	if (!ProjectSettings.has_setting("pck_manager/pck_loader/autoload_all_pck")):
+		ProjectSettings.set_setting("pck_manager/pck_loader/autoload_all_pck", true)
 	ProjectSettings.add_property_info({
-		"name": "PCKLoader/autoload",
+		"name": "pck_manager/pck_loader/autoload_all_pck",
 		"type": TYPE_BOOL
 	})
-	ProjectSettings.set_initial_value("PCKLoader/autoload", true)
-	ProjectSettings.set_as_basic("PCKLoader/autoload", true)
+	ProjectSettings.set_initial_value("pck_manager/pck_loader/autoload_all_pck", true)
+	ProjectSettings.set_as_basic("pck_manager/pck_loader/autoload_all_pck", true)
 	ProjectSettings.save()
 
 func _has_main_screen() -> bool:
