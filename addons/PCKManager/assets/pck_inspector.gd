@@ -36,26 +36,39 @@ func _populate_tree(root: TreeItem, path) -> void:
 func _populate_pck_tree(root: TreeItem, pck_path: String) -> void:
 	var pck_dir = preload("res://addons/PCKManager/PCKDirAccess.gd").new()
 	pck_dir.open(pck_path)
-	var existing_items = {}  # To track existing nodes by path
-	
+	var existing_items = {}
+
 	for full_path in pck_dir.get_paths():
 		var parts = full_path.split("/")
 		var current_parent = root
 		var current_path = ""
-		
-		for part in parts:
+
+		for i in parts.size():
+			var part = parts[i]
 			if part == "":
 				continue
 			current_path += "/" + part
+
+			var is_last = i == parts.size() - 1
+
 			if not existing_items.has(current_path):
-				var item :TreeItem = %PCKFiles.create_item(current_parent)
+				var item: TreeItem = %PCKFiles.create_item(current_parent)
 				item.set_text(0, part)
 				item.set_metadata(0, [pck_path, current_path])
 				item.collapsed = true
 				existing_items[current_path] = item
-				current_parent = item
-			else:
-				current_parent = existing_items[current_path]
+
+				# Only add a button if it's a leaf (i.e., a file)
+				if is_last:
+					item.add_button(
+						0,
+						get_theme_icon("ActionCopy", "EditorIcons"),
+						-1,
+						false,
+						"Copy path to clipboard"
+					)
+			current_parent = existing_items[current_path]
+
 
 func _on_open_folder_pressed() -> void:
 	$FileDialog.popup_centered()
@@ -78,3 +91,8 @@ func _on_pck_files_item_selected() -> void:
 			%PCKFileInfo.text = "File not supported"
 	else:
 		%PCKFileInfo.text = ""
+
+
+func _on_pck_files_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int) -> void:
+	var file_path : String = item.get_metadata(0)[1].trim_prefix("/")
+	DisplayServer.clipboard_set("res://" + file_path)

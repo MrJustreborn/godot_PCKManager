@@ -131,5 +131,6 @@ access = 2
 [connection signal="toggled" from="MarginContainer/TabContainer/PCK Splitter/VBoxContainer/KeepFullPCK" to="." method="_on_keep_full_pck_toggled"]
 [connection signal="pressed" from="MarginContainer/TabContainer/PCK Splitter/VBoxContainer/SavePCKFileCfgs" to="." method="_on_save_pck_file_cfgs_pressed"]
 [connection signal="pressed" from="MarginContainer/TabContainer/PCK Inspector/VBoxContainer/OpenFolder" to="MarginContainer/TabContainer/PCK Inspector" method="_on_open_folder_pressed"]
+[connection signal="button_clicked" from="MarginContainer/TabContainer/PCK Inspector/VBoxContainer/PCKFiles" to="MarginContainer/TabContainer/PCK Inspector" method="_on_pck_files_button_clicked"]
 [connection signal="item_selected" from="MarginContainer/TabContainer/PCK Inspector/VBoxContainer/PCKFiles" to="MarginContainer/TabContainer/PCK Inspector" method="_on_pck_files_item_selected"]
 [connection signal="dir_selected" from="MarginContainer/TabContainer/PCK Inspector/FileDialog" to="MarginContainer/TabContainer/PCK Inspector" method="_on_file_dialog_dir_selected"]
