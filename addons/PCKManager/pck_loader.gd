@@ -13,10 +13,15 @@ func _init() -> void:
 	else:
 		load_pck_files()
 
+##
+# path is relativ to executable or absolut (like usr://...)
 func load_pck_files(path: String = "", suppress_errors: bool = true) -> bool:
 	var base_path := OS.get_executable_path().get_base_dir()
 	if !path.is_empty():
-		base_path += "/" + path
+		if path.is_absolute_path():
+			base_path = path
+		else:
+			base_path += "/" + path
 	return _load_pck_files_recursive(base_path, suppress_errors)
 
 func _load_pck_files_recursive(path: String, suppress_errors: bool) -> bool:
