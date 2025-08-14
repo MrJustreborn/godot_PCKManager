@@ -51,7 +51,7 @@ func get_buffer(filename: String) -> PackedByteArray:
 	
 	return pck_get_file_impl[version].call(filename)
 
-func _pck_get_file_v2(filename: String) -> PackedByteArray:
+func _pck_get_file_v2(filename: String):
 	var major = file.get_32()
 	var minor = file.get_32()
 	var patch = file.get_32()
@@ -78,8 +78,9 @@ func _pck_get_file_v2(filename: String) -> PackedByteArray:
 		if path == filename:
 			var pos = file.get_position()
 			file.seek(file_base_ofs + offset)
+			print_verbose("Get file: ", filename, " pos:", pos, " size:",size)
 			return file.get_buffer(size)
-	return []
+	return null
 
 func _pck_path_v0() -> Array[String]:
 	var files : Array[String] = []

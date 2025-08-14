@@ -114,7 +114,7 @@ func _create_pck(files, path = pck_path) -> Array[String]:
 	for ff in files:
 		ff = ff.get_slice("res://", 1)
 		var buff = pck_dir.get_buffer(ff)
-		if !buff:
+		if buff == null:
 			buff = pck_dir.get_buffer(ff + ".remap")
 			var conf = ConfigFile.new()
 			conf.parse(buff.get_string_from_utf8())
@@ -126,7 +126,9 @@ func _create_pck(files, path = pck_path) -> Array[String]:
 				buff = pck_dir.get_buffer(remap_path.get_slice("res://", 1))
 				packed_files.append(remap_path.get_slice("res://", 1))
 				tmp_files.append(_add_file(buff, packer, remap_path.get_slice("res://", 1)))
-		if buff:
+		if buff is PackedByteArray:
+			if buff.is_empty():
+				printerr("Empty buffer for file " + ff)
 			packed_files.append(ff)
 			tmp_files.append(_add_file(buff, packer, ff))
 	
