@@ -87,8 +87,11 @@ func _filter_paths(pck_dir, path) -> Array[String]:
 				var buff = pck_dir.get_buffer(file)
 				var conf = ConfigFile.new()
 				conf.parse(buff.get_string_from_utf8())
-				var remap_path = conf.get_value("remap", "path")
-				filtered.append(remap_path.get_slice("res://", 1))
+				var keys = conf.get_section_keys("remap")
+				for k in keys:
+					if k.begins_with("path"):
+						var remap_path = conf.get_value("remap", k)
+						filtered.append(remap_path.get_slice("res://", 1))
 	
 	return filtered
 
@@ -118,14 +121,18 @@ func _create_pck(files, path = pck_path) -> Array[String]:
 			buff = pck_dir.get_buffer(ff + ".remap")
 			var conf = ConfigFile.new()
 			conf.parse(buff.get_string_from_utf8())
-			var remap_path = conf.get_value("remap", "path")
-			if remap_path:
-				packed_files.append(ff + ".remap")
-				tmp_files.append(_add_file(buff, packer, ff + ".remap"))
-				
-				buff = pck_dir.get_buffer(remap_path.get_slice("res://", 1))
-				packed_files.append(remap_path.get_slice("res://", 1))
-				tmp_files.append(_add_file(buff, packer, remap_path.get_slice("res://", 1)))
+			var keys = conf.get_section_keys("remap")
+			for k in keys:
+				if k.begins_with("path"):
+					var remap_path = conf.get_value("remap", k)
+					if remap_path:
+						# TODO: check for mulitple path.<foo> remaps
+						packed_files.append(ff + ".remap")
+						tmp_files.append(_add_file(buff, packer, ff + ".remap"))
+						
+						buff = pck_dir.get_buffer(remap_path.get_slice("res://", 1))
+						packed_files.append(remap_path.get_slice("res://", 1))
+						tmp_files.append(_add_file(buff, packer, remap_path.get_slice("res://", 1)))
 		if buff is PackedByteArray:
 			if buff.is_empty():
 				printerr("Empty buffer for file " + ff)
