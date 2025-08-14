@@ -85,7 +85,11 @@ func _on_pck_files_item_selected() -> void:
 	if is_file:
 		pck_dir.open(pck_path)
 		if file_path.ends_with(".import")\
-		or file_path.ends_with(".remap"):
+		or file_path.ends_with(".remap")\
+		or file_path.ends_with(".json")\
+		or file_path.ends_with(".txt")\
+		or file_path.ends_with(".cfg")\
+		or file_path.ends_with(".md"):
 			%PCKFileInfo.text = pck_dir.get_buffer(file_path).get_string_from_utf8()
 		else:
 			%PCKFileInfo.text = "File not supported"
