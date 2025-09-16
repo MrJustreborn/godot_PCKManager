@@ -1,12 +1,14 @@
 extends RefCounted
 
 var pck_path_impl : Dictionary[int, Callable] = {
-	0: _pck_path_v0,
-	2 : _pck_path_v2
+	0 : _pck_path_v0,
+	2 : _pck_path_v2,
+	3 : _pck_path_v3,
 }
 
 var pck_get_file_impl : Dictionary[int, Callable] = {
-	2 : _pck_get_file_v2
+	2 : _pck_get_file_v2,
+	3 : _pck_get_file_v3,
 }
 
 var file : FileAccess
@@ -82,6 +84,39 @@ func _pck_get_file_v2(filename: String):
 			return file.get_buffer(size)
 	return null
 
+func _pck_get_file_v3(filename: String):
+	var pck_start_pos = file.get_position() - 8;
+	
+	var major = file.get_32()
+	var minor = file.get_32()
+	var patch = file.get_32()
+	var flags = file.get_32()
+
+	var version_str = "%d.%d.%d" % [major, minor, patch]
+	
+	var file_base_ofs = file.get_64()
+	
+	var dir_offset = file.get_64() + pck_start_pos;
+	file.seek(dir_offset);
+	
+	var file_count = file.get_32()
+	for i in range(file_count):
+		var length = file.get_32()
+		
+		var path = file.get_buffer(length).get_string_from_utf8()
+		
+		var offset =  file.get_64()
+		var size = file.get_64()
+		var md5 = file.get_buffer(16)
+		var flags_file = file.get_32()
+		
+		if path == filename:
+			var pos = file.get_position()
+			file.seek(file_base_ofs + offset)
+			print_verbose("Get file: ", filename, " pos:", pos, " size:",size)
+			return file.get_buffer(size)
+	return null
+
 func _pck_path_v0() -> Array[String]:
 	var files : Array[String] = []
 	
@@ -120,6 +155,37 @@ func _pck_path_v2() -> Array[String]:
 	
 	for i in range(16): # Reserved
 		file.get_32()
+	
+	var file_count = file.get_32()
+	for i in range(file_count):
+		var length = file.get_32()
+		
+		var path = file.get_buffer(length).get_string_from_utf8()
+		files.append(path)
+		
+		var offset =  file.get_64()
+		var size = file.get_64()
+		var md5 = file.get_buffer(16)
+		var flags_file = file.get_32()
+	
+	return files
+
+func _pck_path_v3() -> Array[String]:
+	var files : Array[String] = []
+	
+	var pck_start_pos = file.get_position() - 8;
+	
+	var major = file.get_32()
+	var minor = file.get_32()
+	var patch = file.get_32()
+	var flags = file.get_32()
+
+	var version_str = "%d.%d.%d" % [major, minor, patch]
+
+	var file_base_ofs = file.get_64()
+	
+	var dir_offset = file.get_64() + pck_start_pos;
+	file.seek(dir_offset);
 	
 	var file_count = file.get_32()
 	for i in range(file_count):
